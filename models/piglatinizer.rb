@@ -6,7 +6,6 @@ class PigLatinizer
 
   def piglatinize(word)
     parts_of_word = word.split(/([^aeiouAEIOU]*)([aeiouAEIOU]*)(.*)/)
-    # binding.pry
     start = parts_of_word[1] 
     rest = parts_of_word[2] + (parts_of_word[3] || "")
     if start.length>0
