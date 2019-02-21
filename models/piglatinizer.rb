@@ -1,33 +1,48 @@
 class PigLatinizer
 
-   def piglatinize(input_str)
-    input_str.split(" ").length == 1 ? piglatinize_word(input_str) : piglatinize_sentence(input_str)
-  end
+   attr_accessor :phrase
 
-   private
+   @@vowels = ["a","e","i","o", "u"]
 
-   def consonant?(char)
-    !char.match(/[aAeEiIoOuU]/)
-  end
-
-   def piglatinize_word(word)
-    if !consonant?(word[0])
-      word = word + "w"
-    elsif consonant?(word[0]) && consonant?(word[1]) && consonant?(word[2])
-      word = word.slice(3..-1) + word.slice(0,3)
-    elsif consonant?(word[0]) && consonant?(word[1])
-      word = word.slice(2..-1) + word.slice(0,2)
-    else
-      word = word.slice(1..-1) + word.slice(0)
-    end
-    word << "ay"
+   def initialize
+    @phrase = phrase
   end
 
    def piglatinize_sentence(sentence)
-    sentence.split.collect { |word| piglatinize_word(word) }.join(" ")
+    arr = sentence.split(" ")
+    new_arr = arr.map do |word|
+      self.piglatinize_word(word)
+    end
+    new_arr.join(" ")
   end
 
+   def piglatinize_word(word)
+    arr = word.split('')
 
+     if @@vowels.detect{|v| v == arr[0].downcase}
+	     arr << ["w", "a", "y"]
+       new_word = arr.flatten.join("")
+     elsif @@vowels.detect{|v| v != arr[0].downcase && v == arr[1].downcase}
+       first_letter = arr.shift
+       arr << ["#{first_letter}", "a", "y"]
+       new_word = arr.flatten.join("")
+     else
+       vowel = arr.find{|letter| @@vowels.include?(letter)}
+       vowel_index = arr.index("#{vowel}")
+       prefix = arr.shift(vowel_index.to_i)
+       suffix = prefix << ["a", "y"]
+       arr << suffix
+       new_word = arr.flatten.join("")
+     end
+   new_word
+  end
 
+   def piglatinize(phrase)
+    if phrase.match(/\s/)
+      self.piglatinize_sentence(phrase)
+    else
+      self.piglatinize_word(phrase)
+    end
+  end
 
  end
